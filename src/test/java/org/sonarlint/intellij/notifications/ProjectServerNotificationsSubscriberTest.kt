@@ -19,17 +19,6 @@
  */
 package org.sonarlint.intellij.notifications
 
-import com.intellij.openapi.module.Module
-import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.openapi.roots.ContentEntry
-import com.intellij.openapi.roots.DependencyScope
-import com.intellij.openapi.roots.ModifiableRootModel
-import com.intellij.openapi.roots.ModuleRootModificationUtil
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.testFramework.IdeaTestUtil
-import com.intellij.testFramework.LightProjectDescriptor
-import com.intellij.testFramework.PsiTestUtil
-import com.intellij.testFramework.fixtures.DefaultLightProjectDescriptor
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.tuple
 import org.junit.Before
@@ -41,20 +30,18 @@ import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 import org.mockito.Mockito.timeout
-import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.verifyZeroInteractions
 import org.mockito.junit.MockitoJUnitRunner
 import org.sonarlint.intellij.AbstractSonarLintLightTests
-import org.sonarlint.intellij.analysis.JavaAnalysisConfiguratorTests
 import org.sonarlint.intellij.any
 import org.sonarlint.intellij.capture
 import org.sonarlint.intellij.config.global.ServerConnection
+import org.sonarlint.intellij.config.global.SonarLintGlobalSettings
 import org.sonarlint.intellij.core.ServerNotificationsService
 import org.sonarlint.intellij.messages.GlobalConfigurationListener
 import org.sonarlint.intellij.messages.ProjectConfigurationListener
 import org.sonarsource.sonarlint.core.client.api.common.NotificationConfiguration
-import java.io.IOException
 
 @RunWith(MockitoJUnitRunner::class)
 class ProjectServerNotificationsSubscriberTest : AbstractSonarLintLightTests() {
@@ -123,7 +110,7 @@ class ProjectServerNotificationsSubscriberTest : AbstractSonarLintLightTests() {
     projectServerNotificationsSubscriber.start()
     connectProjectWithNotifications()
 
-    project.messageBus.syncPublisher(GlobalConfigurationListener.TOPIC).applied(globalSettings)
+    project.messageBus.syncPublisher(GlobalConfigurationListener.TOPIC).applied(SonarLintGlobalSettings(), globalSettings)
 
     verify(serverNotificationsService, timeout(5000)).register(capture(notificationConfigurationCaptor))
     val notificationConfiguration = notificationConfigurationCaptor.value
@@ -147,7 +134,7 @@ class ProjectServerNotificationsSubscriberTest : AbstractSonarLintLightTests() {
     connectProjectWithNotifications()
     projectServerNotificationsSubscriber.start()
 
-    project.messageBus.syncPublisher(GlobalConfigurationListener.TOPIC).applied(globalSettings)
+    project.messageBus.syncPublisher(GlobalConfigurationListener.TOPIC).applied(SonarLintGlobalSettings(), globalSettings)
 
     verify(serverNotificationsService, timeout(5000)).unregister(any())
   }

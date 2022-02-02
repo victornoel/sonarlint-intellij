@@ -78,7 +78,7 @@ class ProjectServerNotificationsSubscriber : Disposable {
       }
     })
     busConnection.subscribe(GlobalConfigurationListener.TOPIC, object : GlobalConfigurationListener.Adapter() {
-      override fun applied(settings: SonarLintGlobalSettings) {
+      override fun applied(previousSettings: SonarLintGlobalSettings, newSettings: SonarLintGlobalSettings) {
         ApplicationManager.getApplication().executeOnPooledThread {
           register()
         }
