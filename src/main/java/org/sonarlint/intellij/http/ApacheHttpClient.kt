@@ -109,12 +109,14 @@ class ApacheHttpClient private constructor(
   companion object {
     private val CONNECTION_TIMEOUT = Timeout.ofSeconds(30)
     private val RESPONSE_TIMEOUT = Timeout.ofMinutes(10)
+    private const val CONNECTION_POOL_SIZE = 5
 
     @JvmStatic
     val default: ApacheHttpClient = ApacheHttpClient(
       HttpAsyncClients.custom()
         .setConnectionManager(
           PoolingAsyncClientConnectionManagerBuilder.create()
+            .setMaxConnTotal(CONNECTION_POOL_SIZE)
             .setTlsStrategy(
               ClientTlsStrategyBuilder.create()
                 .setSslContext(CertificateManager.getInstance().sslContext)
